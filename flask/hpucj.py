@@ -9,9 +9,10 @@ from io import BytesIO
 from bs4 import BeautifulSoup
 import pytesseract
 import PIL.ImageOps
+import re
 
 app = Flask(__name__)
-'''
+
 def initTable(threshold=140):
     table = []
     for i in range(256):
@@ -20,7 +21,7 @@ def initTable(threshold=140):
         else:
             table.append(1)
     return table
-'''
+
 
 
 @app.route('/', methods=['GET'])
@@ -41,20 +42,22 @@ def index_post():
 
     im = r_yzm_1.convert('L')
 
-    # binaryImage = im.point(initTable(), '1')
+    binaryImage = im.point(initTable(), '1')
 
-    # im1 = binaryImage.convert('L')
-    # im2 = PIL.ImageOps.invert(im1)
-    # im3 = im2.convert('1')
-    # im4 = im3.convert('L')
+    im1 = binaryImage.convert('L')
+    im2 = PIL.ImageOps.invert(im1)
+    im3 = im2.convert('1')
+    im4 = im3.convert('L')
     # 将图片中字符裁剪保留
     # box = (30, 10, 90, 28)
     # region = im4.crop(box)
     # 将图片字符放大
-    # out = region.resize((120, 38))
+    out = im4.resize((120, 40))
     code = pytesseract.image_to_string(im)
     # code = pytesseract.image_to_string(r_yzm_1)
     yzm = str(code)
+    yzm = yzm.replace(' ', '')
+    yzm = re.sub('[^A-Za-z0-9]', '', yzm)
     # print('2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222')
     print(yzm)
     # print('2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222')
@@ -98,20 +101,22 @@ def page_not_found(error):
 
     im_2 = r_yzm_1_2.convert('L')
 
-    # binaryImage = im.point(initTable(), '1')
+    binaryImage = im_2.point(initTable(), '1')
 
-    # im1 = binaryImage.convert('L')
-    # im2 = PIL.ImageOps.invert(im1)
-    # im3 = im2.convert('1')
-    # im4 = im3.convert('L')
+    im1 = binaryImage.convert('L')
+    im2 = PIL.ImageOps.invert(im1)
+    im3 = im2.convert('1')
+    im4 = im3.convert('L')
     # 将图片中字符裁剪保留
     # box = (30, 10, 90, 28)
     # region = im4.crop(box)
     # 将图片字符放大
-    # out = region.resize((120, 38))
-    code_2 = pytesseract.image_to_string(im_2)
+    out = im4.resize((120, 38))
+    code_2 = pytesseract.image_to_string(out)
     # code = pytesseract.image_to_string(r_yzm_1)
     yzm_2 = str(code_2)
+    yzm_2 = yzm_2.replace(' ', '')
+    yzm_2 = re.sub('[^A-Za-z0-9]', '', yzm_2)
     # print('2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222')
     print(yzm_2)
     # print('2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222')
@@ -143,10 +148,10 @@ def page_not_found(error):
 
         return str(soup2_2)
     else:
-        abort(404)
+        abort(403)
 
 
-@app.errorhandler(404)
+@app.errorhandler(403)
 def page_not_found_104(error2):
     rs_2 = requests.session()
     rs_get = rs_2.get(url=' http://218.196.240.97/loginAction.do'
@@ -159,20 +164,23 @@ def page_not_found_104(error2):
 
     im_2 = r_yzm_1_2.convert('L')
 
-    # binaryImage = im.point(initTable(), '1')
+    binaryImage = im_2.point(initTable(), '1')
 
-    # im1 = binaryImage.convert('L')
-    # im2 = PIL.ImageOps.invert(im1)
-    # im3 = im2.convert('1')
-    # im4 = im3.convert('L')
+    im1 = binaryImage.convert('L')
+    im2 = PIL.ImageOps.invert(im1)
+    im3 = im2.convert('1')
+    im4 = im3.convert('L')
     # 将图片中字符裁剪保留
     # box = (30, 10, 90, 28)
     # region = im4.crop(box)
     # 将图片字符放大
-    # out = region.resize((120, 38))
-    code_2 = pytesseract.image_to_string(im_2)
+    out = im4.resize((120, 38))
+    code_2 = pytesseract.image_to_string(out)
     # code = pytesseract.image_to_string(r_yzm_1)
     yzm_2 = str(code_2)
+    yzm_2 = yzm_2.replace(' ', '')
+    yzm_2 = re.sub('[^A-Za-z0-9]', '', yzm_2)
+
     # print('2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222')
     print(yzm_2)
     # print('2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222')
@@ -196,11 +204,20 @@ def page_not_found_104(error2):
     # print(r_post.content)
     # print(r_post.next)
 
-    r_cjpost_2 = rs_2.post_2(url=' http://218.196.240.97/gradeLnAllAction.do?type=ln&oper=sxinfo&lnsxdm=001', )
+    r_cjpost_2 = rs_2.post(url=' http://218.196.240.97/gradeLnAllAction.do?type=ln&oper=sxinfo&lnsxdm=001', )
     r_cjpost_2.encoding = r_cjpost_2.apparent_encoding
     # print(r_cjpost.text)
     soup2_2 = BeautifulSoup(r_cjpost_2.text, 'html.parser')
-    return str(soup2_2)
+    #return str(soup2_2)
+    if r_cjpost_2.status_code == 200:
+        #soup2_2 = BeautifulSoup(r_cjpost_2.text, 'html.parser')
+
+        return str(soup2_2)
+    else:
+        abort(400)
+@app.errorhandler(400)
+def index_40000(a):
+    return '请输入正确的信息并重试'
 
 
 
@@ -216,9 +233,10 @@ if __name__ == '__main__':
 
 尝试客户端接收数据
 验证码识别率低
-未优化图片处理机制
+已优化图片处理机制
 
 
 异常处理不完善
 
 '''
+
