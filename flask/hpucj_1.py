@@ -90,6 +90,7 @@ def index_post():
             c =r_cjpost.status_code
             soup2 = BeautifulSoup(r_cjpost.text, 'html.parser')
             return str(soup2)
+            c = 200
         except:
             c = 201
 @app.errorhandler(500)
