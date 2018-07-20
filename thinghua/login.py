@@ -1,4 +1,4 @@
-#获取 学生，课程信息 
+#获取学生课程信息
 #coding:utf-8
 import requests
 import json
@@ -32,9 +32,12 @@ rp_id =rs.post(url='http://sso.tsinghuawaiyu.com/v1/tickets',
                 'username':xuehao,
                 'password' :mima
             })
-
-#生成st
-rp_st =rs.post(url='http://sso.tsinghuawaiyu.com/v1/serviceTicket',
+longin =json.loads(rp_id.text)['result']['msg']
+if str(longin) =='用户名密码错误!':
+    print(longin)
+else:
+    #生成st
+    rp_st =rs.post(url='http://sso.tsinghuawaiyu.com/v1/serviceTicket',
             headers={
 
 
@@ -53,8 +56,8 @@ rp_st =rs.post(url='http://sso.tsinghuawaiyu.com/v1/serviceTicket',
                 'service':'http://school.tsinghuawaiyu.com/client/user/currentuser',
 
             })
-st =json.loads(rp_st.text)['data']['serverTicket']
-print(st)
+    st =json.loads(rp_st.text)['data']['serverTicket']
+    print(st)
 
 #jessionid BY st
 
@@ -63,7 +66,7 @@ print(st)
 
 #uuid  name school BY st
 
-rg_uuid = rs.get(url='http://school.tsinghuawaiyu.com/client/user/currentuser?ticket='+str(st),
+    rg_uuid = rs.get(url='http://school.tsinghuawaiyu.com/client/user/currentuser?ticket='+str(st),
             headers={
 
 
@@ -79,12 +82,12 @@ rg_uuid = rs.get(url='http://school.tsinghuawaiyu.com/client/user/currentuser?ti
 
             },
            )
-uuid =json.loads(rg_uuid.text)['data']['uuid']
-realname =json.loads(rg_uuid.text)['data']['realname']
-schoolname =json.loads(rg_uuid.text)['data']['organName']
-username =json.loads(rg_uuid.text)['data']['username']
+    uuid =json.loads(rg_uuid.text)['data']['uuid']
+    realname =json.loads(rg_uuid.text)['data']['realname']
+    schoolname =json.loads(rg_uuid.text)['data']['organName']
+    username =json.loads(rg_uuid.text)['data']['username']
 #teachername crouses BY jessionid
-rp_nc =rs.post(url='http://school.tsinghuawaiyu.com/client/course/list-of-student?status=1&pager.pageSize=8',
+    rp_nc =rs.post(url='http://school.tsinghuawaiyu.com/client/course/list-of-student?status=1&pager.pageSize=8',
             headers={
 
 
@@ -103,13 +106,14 @@ rp_nc =rs.post(url='http://school.tsinghuawaiyu.com/client/course/list-of-studen
                 'username':xuehao,
                 'password' :mima
             })
-crousrslist=json.loads(rp_nc.text)['data']['list']
-for each in crousrslist:
-    print(each)
-print(username)
-print(schoolname)
-print(realname)
-printinfo(rp_id)
+    crousrslist=json.loads(rp_nc.text)['data']['list']
+    for each in crousrslist:
+        print(each['courseName'])
+        print(each['lecturerName'])
+    print(username)
+    print(schoolname)
+    print(realname)
+    printinfo(rp_id)
 
 
 
